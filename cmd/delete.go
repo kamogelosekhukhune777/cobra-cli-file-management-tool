@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -10,15 +11,12 @@ import (
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "deletes a file",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "deletes a file with undo support",
+	Long:  ``,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteFile(args[0])
+		filePath := args[0]
+		deleteFile(filePath)
 	},
 }
 
@@ -36,6 +34,13 @@ func init() {
 	// deleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+type DeletedFileInfo struct {
+	Path       string
+	DeleteTime time.Time
+}
+
+var deletedFiles []DeletedFileInfo
+
 func deleteFile(filepath string) {
 	err := os.Remove(filepath)
 	if err != nil {
@@ -44,4 +49,10 @@ func deleteFile(filepath string) {
 	}
 
 	fmt.Printf("File '%v' deleted successfully", filepath)
+
+	//log deleted file
+	deletedFiles = append(deletedFiles, DeletedFileInfo{
+		Path:       filepath,
+		DeleteTime: time.Now(),
+	})
 }
