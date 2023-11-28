@@ -77,5 +77,6 @@ func extractZipArchieve(archivePath, destPath string) {
 			return
 		}
 	}
+
 	fmt.Println("Zip archive extracted to:", destPath)
 }
